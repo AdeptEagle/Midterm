@@ -5,6 +5,8 @@ import cors from "cors";
 import { AppDataSource } from "./_helpers/db";
 import errorHandler from "./_middleware/error-handler";
 import usersController from "./users/user.controller";
+import employeesController from "./employees/employees.controller"; // Import employeesController
+
 
 const app = express();
 
@@ -13,7 +15,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // API routes
+app.use("/employees", employeesController); // Set up employee routes
+
 app.use("/users", usersController);
+
 
 // Global error handler
 app.use(errorHandler);
