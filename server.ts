@@ -8,13 +8,12 @@ import usersController from "./users/user.controller";
 
 const app = express();
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // API routes
-app.use("/employees", usersController);
+app.use("/employee", usersController);
 
 // Global error handler
 app.use(errorHandler);

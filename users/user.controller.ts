@@ -1,26 +1,58 @@
-import { Router, Request, Response, NextFunction } from "express";
+import {Request, Response, NextFunction } from "express";
+import { Router } from "express";
 import * as Joi from "joi";
 import { validateRequest } from "../_middleware/validation";
 import { UserService } from "../users/user.service";
 import { DepartmentRole } from "../_helpers/role.enum";
 import { Like } from "typeorm";
-
+import { AppDataSource } from "../_helpers/db";
+import { Employee } from "./employee";
 
 const router = Router();
 const userService = new UserService();
+export default router;
 
-router.get("/", getAll); //get employees
-router.get("/",getById); 
-router.get("/:id/tenure",getById);  //get tenure
-router.post("/", createSchema, create);
-router.post("/:id/projects", createSchema, create); //assign emp to proj
-router.post("/bulk", createSchema, create);
+
+
+router.get("/", getAll); // Get all employees
+router.get("/:id", getById); // Get employee by ID
+
+//Case 1 
+router.post("/employees", createSchema, create);
 router.put("/:id", updateSchema, update);
-router.put("/:id/transfer", updateSchema, update); //dept transfer 
-router.get("/:id/salary", getById); //update salary
 router.delete("/:id", _delete);
 
-export default router;
+
+//case 2
+export const getEmployees = async (req: Request, res: Response) => {
+    try {
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = 10;
+        const skip = (page - 1) * limit;
+        
+        const employeeRepo = AppDataSource.getRepository(Employee);
+        const [employees, total] = await employeeRepo.findAndCount({
+            relations: ["department"],
+            skip: skip,
+            take: limit
+        });
+        
+        res.json({
+            data: employees,
+            total,
+            page,
+            totalPages: Math.ceil(total / limit)
+        });
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+
+router.get("/employees", getEmployees); // Get paginated employees
+
+
+
 
 // Route functions
 async function getAll(req: Request, res: Response, next: NextFunction) {
@@ -68,32 +100,28 @@ async function _delete(req: Request, res: Response, next: NextFunction) {
     }
 }
 
-// Schema functions
+
 function createSchema(req: Request, res: Response, next: NextFunction) {
     const schema = Joi.object({
         name: Joi.string().required(),
         position: Joi.string().required(),
-        lastName: Joi.string().required(),
-        email: Joi.string().email().required(),
-        department: Joi.object({
-            id: Joi.number().integer().required(),
-            name: Joi.string().valid("Engineering", "Finance", "Human Resources", "Marketing").required(),
-        }).required()
+        departmentId: Joi.number().integer().required(),  // Match the entity foreign key
+        hireDate: Joi.date().iso().optional(),           // Match the "date" type
+        salary: Joi.number().integer().optional()
     });
 
     validateRequest(req, next, schema);
 }
+
 function updateSchema(req: Request, res: Response, next: NextFunction) {
     const schema = Joi.object({
         name: Joi.string().optional(),
         position: Joi.string().optional(),
-        lastName: Joi.string().optional(),
-        email: Joi.string().email().optional(),
-        department: Joi.object({
-            id: Joi.number().integer().optional(),
-            name: Joi.string().valid("Engineering", "Finance", "Human Resources", "Marketing").optional(),
-        }).optional()
+        departmentId: Joi.number().integer().optional(),  // Allow updating department
+        hireDate: Joi.date().iso().optional(),
+        salary: Joi.number().integer().optional()
     });
 
     validateRequest(req, next, schema);
 }
+
