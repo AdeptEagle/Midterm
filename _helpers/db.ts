@@ -20,7 +20,7 @@ export const AppDataSource = new DataSource({
     port: Number(process.env.DB_PORT) || 3306,
     username: process.env.DB_USER || "root",
     password: process.env.DB_PASS || "root",
-    database: process.env.DB_NAME || "votingsys",
+    database: process.env.DB_NAME || "miditerm",
     entities: [User],
     synchronize: true,
     migrations: [],

@@ -28,6 +28,6 @@ export class User {
     Course: string;
 
 
-    @Column({ type: "enum", enum: Role, default: Role.User })
+    @Column({ type: "enum", enum: Role, default: Role.Employee })
     role: Role;
 }
