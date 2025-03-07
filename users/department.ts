@@ -1,16 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, ManyToOne, CreateDateColumn, OneToMany } from "typeorm";
-import * as bcrypt from "bcryptjs";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { DepartmentRole } from "../_helpers/role.enum";
 import { Employee } from "./employee";
 
 @Entity()
-export class Department{
+export class Department {
     @PrimaryGeneratedColumn()
-    id: number; 
+    id: number;
 
-    @Column()
-    Department: string;
+    @Column({
+        type: "enum",
+        enum: DepartmentRole,
+        unique: true,
+    })
+    name: DepartmentRole;
 
-    @OneToMany(()=> Employee, (employee)=> employee.department)
+    @OneToMany(() => Employee, (employee) => employee.department)
     employees: Employee[];
 }
