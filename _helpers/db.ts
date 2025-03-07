@@ -31,7 +31,7 @@ export const AppDataSource = new DataSource({
     password: process.env.DB_PASS || "root",
     database: process.env.DB_NAME || "midtermtest",
     entities: [Employee, Department],
-    synchronize: true, // Set to false in production and use migrations
+    synchronize: false, // Set to false in production and use migrations
     migrations: [],
     logging: true,
 });
