@@ -1,17 +1,23 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import mysql from "mysql2/promise";
-import { User } from "../users/user.entity"; 
+import { User } from "../users/user.entity";
 
 async function ensureDatabaseExists() {
-    const connection = await mysql.createConnection({
-        host: process.env.DB_HOST || "localhost",
-        user: process.env.DB_USER || "root",
-        password: process.env.DB_PASS || "root",
-    });
+    try {
+        const connection = await mysql.createConnection({
+            host: process.env.DB_HOST || "localhost",
+            user: process.env.DB_USER || "root",
+            password: process.env.DB_PASS || "root",
+        });
 
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME || "votingsys"}\``);
-    await connection.end();
+        const dbName = process.env.DB_NAME || "employee_managemment";
+        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
+        await connection.end();
+        console.log(`Database '${dbName}' ensured.`);
+    } catch (error) {
+        console.error("Error ensuring database exists:", error);
+    }
 }
 
 export const AppDataSource = new DataSource({
@@ -20,11 +26,10 @@ export const AppDataSource = new DataSource({
     port: Number(process.env.DB_PORT) || 3306,
     username: process.env.DB_USER || "root",
     password: process.env.DB_PASS || "root",
-    database: process.env.DB_NAME || "votingsys",
+    database: process.env.DB_NAME || "employee_managemment",
     entities: [User],
     synchronize: true,
-    migrations: [],
-    logging: true, 
+    logging: true,
 });
 
 ensureDatabaseExists().then(() => {
