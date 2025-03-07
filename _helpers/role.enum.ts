@@ -1,6 +1,6 @@
-export enum Role {
-  Admin = 'Admin', 
-  User= 'User',    
-  Candidate = "Candidate" 
+export enum DepartmentRole {
+  Engineering = 'Engineering', 
+  HumanResources= 'Human Resources',    
+  Finance = 'Finance',
+  Marketing = 'Marketing'
 }
-  
