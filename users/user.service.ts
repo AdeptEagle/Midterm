@@ -12,18 +12,38 @@ export class UserService {
 
     async getAll() {
         return await this.userRepository.find({
-            select: ["id", "email", "title", "firstName", "lastName", "role", "Department", "Course"], 
+            select: [
+                "employeeId",
+                "email",
+                "title",
+                "firstName",
+                "lastName",
+                "role",
+                "Department",
+                "Course",
+                "hireDate",
+                "yearsOfService",
+            ],
         });
     }
 
     async getById(id: number) {
-        const user = await this.userRepository.findOneBy({ id });
+        const user = await this.userRepository.findOne({ where: { employeeId: id } });
         if (!user) throw new Error("User not found");
         return user;
     }
 
+    async getEmployeeTenure(id: number) {
+        const user = await this.getById(id);
+        if (!user.hireDate) throw new Error("Hire date not set for this user");
+
+        const currentYear = new Date().getFullYear();
+        const hireYear = new Date(user.hireDate).getFullYear();
+        return { employeeId: user.employeeId, name: `${user.firstName} ${user.lastName}`, yearsOfService: currentYear - hireYear };
+    }
+
     async create(params: Partial<User> & { password?: string }) {
-        if (await this.userRepository.findOneBy({ email: params.email })) {
+        if (await this.userRepository.findOne({ where: { email: params.email } })) {
             throw new Error(`Email "${params.email}" is already registered`);
         }
 
@@ -32,7 +52,7 @@ export class UserService {
         // Handle password separately
         if (params.password) {
             user.passwordHash = await bcrypt.hash(params.password, 10);
-            delete (params as any).password; 
+            delete (params as any).password;
         }
 
         await this.userRepository.save(user);
@@ -42,7 +62,7 @@ export class UserService {
         const user = await this.getById(id);
 
         if (params.email && user.email !== params.email) {
-            if (await this.userRepository.findOneBy({ email: params.email })) {
+            if (await this.userRepository.findOne({ where: { email: params.email } })) {
                 throw new Error(`Email "${params.email}" is already taken`);
             }
         }
