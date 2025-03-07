@@ -24,17 +24,19 @@ router.delete("/:id", _delete);
 
 
 //case 2
-export const getEmployees = async (req: Request, res: Response, next: NextFunction) => {
+export const getEmployees = async (req: Request, res: Response) => {
     try {
         const page = parseInt(req.query.page as string) || 1;
         const limit = 10;
         const skip = (page - 1) * limit;
+        
         const employeeRepo = AppDataSource.getRepository(Employee);
         const [employees, total] = await employeeRepo.findAndCount({
             relations: ["department"],
-            skip,
+            skip: skip,
             take: limit
         });
+        
         res.json({
             data: employees,
             total,
@@ -42,10 +44,9 @@ export const getEmployees = async (req: Request, res: Response, next: NextFuncti
             totalPages: Math.ceil(total / limit)
         });
     } catch (error) {
-        next(error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 };
-
 
 
 router.get("/employees", getEmployees); // Get paginated employees
