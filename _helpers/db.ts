@@ -1,17 +1,26 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 import mysql from "mysql2/promise";
-import { User } from "../users/user.entity"; 
+import { Employee } from "../users/employee"; 
+import { Department } from "../users/department"; // Ensure correct path
+import { DepartmentRole } from "../_helpers/role.enum"; // Ensure correct path
 
 async function ensureDatabaseExists() {
-    const connection = await mysql.createConnection({
-        host: process.env.DB_HOST || "localhost",
-        user: process.env.DB_USER || "root",
-        password: process.env.DB_PASS || "root",
-    });
+    try {
+        const connection = await mysql.createConnection({
+            host: process.env.DB_HOST || "localhost",
+            user: process.env.DB_USER || "root",
+            password: process.env.DB_PASS || "root",
+        });
 
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME || "votingsys"}\``);
-    await connection.end();
+        const dbName = process.env.DB_NAME || "midtermtest";
+        await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
+        console.log(`Database "${dbName}" ensured.`);
+        await connection.end();
+    } catch (error) {
+        console.error("Error ensuring database exists:", error);
+        process.exit(1);
+    }
 }
 
 export const AppDataSource = new DataSource({
@@ -20,15 +29,36 @@ export const AppDataSource = new DataSource({
     port: Number(process.env.DB_PORT) || 3306,
     username: process.env.DB_USER || "root",
     password: process.env.DB_PASS || "root",
-    database: process.env.DB_NAME || "miditerm",
-    entities: [User],
-    synchronize: true,
+    database: process.env.DB_NAME || "midtermtest",
+    entities: [Employee, Department],
+    synchronize: true, // Set to false in production and use migrations
     migrations: [],
-    logging: true, 
+    logging: true,
 });
 
-ensureDatabaseExists().then(() => {
+async function ensureDepartmentsExist() {
+    const departmentRepository = AppDataSource.getRepository(Department);
+
+    for (const role of Object.values(DepartmentRole)) {
+        const existingDepartment = await departmentRepository.findOne({ where: { name: role } });
+        if (!existingDepartment) {
+            const department = departmentRepository.create({ name: role });
+            await departmentRepository.save(department);
+            console.log(`Inserted department: ${role}`);
+        }
+    }
+}
+
+(async () => {
+    await ensureDatabaseExists();
+
     AppDataSource.initialize()
-        .then(() => console.log("Database Connected!"))
-        .catch((error) => console.error("Database Connection Error:", error));
-});
+        .then(async () => {
+            console.log("Database Connected!");
+            await ensureDepartmentsExist();
+        })
+        .catch((error) => {
+            console.error("Database Connection Error:", error);
+            process.exit(1);
+        });
+})();

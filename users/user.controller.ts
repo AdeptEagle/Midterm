@@ -2,16 +2,22 @@ import { Router, Request, Response, NextFunction } from "express";
 import * as Joi from "joi";
 import { validateRequest } from "../_middleware/validation";
 import { UserService } from "../users/user.service";
-import { Role } from "../_helpers/role.enum";
+import { DepartmentRole } from "../_helpers/role.enum";
+import { Like } from "typeorm";
 
 
 const router = Router();
 const userService = new UserService();
 
-router.get("/", getAll);
-router.get("/:id", getById);
+router.get("/", getAll); //get employees
+router.get("/",getById); 
+router.get("/:id/tenure",getById);  //get tenure
 router.post("/", createSchema, create);
+router.post("/:id/projects", createSchema, create); //assign emp to proj
+router.post("/bulk", createSchema, create);
 router.put("/:id", updateSchema, update);
+router.put("/:id/transfer", updateSchema, update); //dept transfer 
+router.get("/:id/salary", getById); //update salary
 router.delete("/:id", _delete);
 
 export default router;
@@ -65,28 +71,29 @@ async function _delete(req: Request, res: Response, next: NextFunction) {
 // Schema functions
 function createSchema(req: Request, res: Response, next: NextFunction) {
     const schema = Joi.object({
-        title: Joi.string().required(),
-        firstName: Joi.string().required(),
+        name: Joi.string().required(),
+        position: Joi.string().required(),
         lastName: Joi.string().required(),
-        role: Joi.string().valid(Role.Employee, Role.Position, Role.Department).required(),
         email: Joi.string().email().required(),
-        password: Joi.string().min(6).required(),
-        confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
+        department: Joi.object({
+            id: Joi.number().integer().required(),
+            name: Joi.string().valid("Engineering", "Finance", "Human Resources", "Marketing").required(),
+        }).required()
     });
 
     validateRequest(req, next, schema);
 }
-
 function updateSchema(req: Request, res: Response, next: NextFunction) {
     const schema = Joi.object({
-        title: Joi.string().empty(""),
-        firstName: Joi.string().empty(""),
-        lastName: Joi.string().empty(""),
-        role: Joi.string().valid(Role.Employee, Role.Position, Role.Department).empty(""),
-        email: Joi.string().email().empty(""),
-        password: Joi.string().min(6).empty(""),
-        confirmPassword: Joi.string().valid(Joi.ref("password")).empty(""),
-    }).with("password", "confirmPassword");
+        name: Joi.string().optional(),
+        position: Joi.string().optional(),
+        lastName: Joi.string().optional(),
+        email: Joi.string().email().optional(),
+        department: Joi.object({
+            id: Joi.number().integer().optional(),
+            name: Joi.string().valid("Engineering", "Finance", "Human Resources", "Marketing").optional(),
+        }).optional()
+    });
 
     validateRequest(req, next, schema);
 }
