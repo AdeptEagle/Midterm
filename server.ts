@@ -10,15 +10,13 @@ import employeesController from "./employees/employees.controller"; // Import em
 
 const app = express();
 
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 // API routes
-app.use("/employees", employeesController); // Set up employee routes
-
 app.use("/users", usersController);
-
 
 // Global error handler
 app.use(errorHandler);
