@@ -1,31 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert, ManyToOne, CreateDateColumn, OneToMany } from "typeorm";
-import * as bcrypt from "bcryptjs";
-import { DepartmentRole } from "../_helpers/role.enum";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import { Department } from "../users/department";
+
 @Entity()
 export class Employee {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ type: "varchar", length: 255, unique: true })
-    name: string;
+  @Column({ type: "varchar", length: 50 })
+  name: string;
 
-    @Column({ type: "varchar", length: 255 })
-    position: string;
+  @Column({ type: "varchar", length: 50 })
+  lastName: string;
 
-    @Column({nullable:true})
-    salary: number;
+  @Column({ type: "varchar", length: 100 })
+  position: string;
 
-    @Column({ type: "varchar", length: 255 })
-    email: string;
+  @Column({ type: "decimal", precision: 10, scale: 2})
+  salary: number;
 
-    @ManyToOne(() => Department)
-    department: Department;
+  @Column({ type: "varchar", length: 100, unique: true })
+  email: string;
 
-    @Column({ default:true })
-    isActive: boolean;
+  @ManyToOne(() => Department, (department) => department.employees, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "departmentId" })
+  department: Department;
 
-    @CreateDateColumn()
-    hireDate: Date;
+  @Column()
+  departmentId: number;
+
+  @Column({ type: "boolean", default: true })
+  isActive: boolean;
 }
-

@@ -2,7 +2,8 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import mysql from "mysql2/promise";
 import { Employee } from "../users/employee"; 
-import { Department } from "../users/department"; 
+import { Department } from "../users/department"; // Ensure correct path
+import { DepartmentRole } from "../_helpers/role.enum"; // Ensure correct path
 
 async function ensureDatabaseExists() {
     try {
@@ -35,11 +36,27 @@ export const AppDataSource = new DataSource({
     logging: true,
 });
 
+async function ensureDepartmentsExist() {
+    const departmentRepository = AppDataSource.getRepository(Department);
+
+    for (const role of Object.values(DepartmentRole)) {
+        const existingDepartment = await departmentRepository.findOne({ where: { name: role } });
+        if (!existingDepartment) {
+            const department = departmentRepository.create({ name: role });
+            await departmentRepository.save(department);
+            console.log(`Inserted department: ${role}`);
+        }
+    }
+}
+
 (async () => {
     await ensureDatabaseExists();
 
     AppDataSource.initialize()
-        .then(() => console.log("Database Connected!"))
+        .then(async () => {
+            console.log("Database Connected!");
+            await ensureDepartmentsExist();
+        })
         .catch((error) => {
             console.error("Database Connection Error:", error);
             process.exit(1);
