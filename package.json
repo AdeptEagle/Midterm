@@ -1,13 +1,55 @@
 {
+<<<<<<< HEAD
+=======
+  "name": "midterm",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.ts",
+    "start": "node dist/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdeptEagle/VotingSystem_mySQL.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AdeptEagle/VotingSystem_mySQL/issues"
+  },
+  "homepage": "https://github.com/AdeptEagle/VotingSystem_mySQL#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.2.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "joi": "^17.13.3",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.13.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.21",
+    "winston": "^3.17.0"
+  },
+>>>>>>> c029902efe916ca3d15ab36d4ce0408e4a1e1726
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/joi": "^17.2.2",
+<<<<<<< HEAD
     "@types/node": "^22.13.10",
     "ts-node": "^10.9.2"
   },
   "dependencies": {
     "typeorm": "^0.3.21"
   }
+=======
+    "@types/node": "^22.13.9",
+    "ts-node": "^10.9.2"
+  },
+  "description": ""
+>>>>>>> c029902efe916ca3d15ab36d4ce0408e4a1e1726
 }
