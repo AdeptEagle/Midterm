@@ -1,21 +1,26 @@
 {
-  "name": "your-project",idterm",
-  "version": "1.0.0",ion": "1.0.0",
-  "description": "",,
+  "name": "your-project",
+  "version": "1.0.0",
+  "description": "",
   "main": "index.js",
-  "scripts": {rror: no test specified\" && exit 1",
-    "start": "node index.js"demon server.ts",
+  "scripts": {
+    "start": "node index.js"
   },
   "dependencies": {
-    "express": "^4.17.2"
-  },"type": "git",
-  "devDependencies": {ttps://github.com/AdeptEagle/VotingSystem_mySQL.git"
+    "express": "^4.17.2",
+    "joi": "^17.13.3",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.13.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.21",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",uthor": "",
-    "@types/joi": "^17.2.2",",
-    "@types/node": "^22.13.9",
-    "ts-node": "^10.9.2"/github.com/AdeptEagle/VotingSystem_mySQL/issues"
+    "@types/express": "^5.0.0",
+    "@types/joi": "^17.2.2",
+    "@types/node": "^22.13.10",
+    "ts-node": "^10.9.2"
   }
-}me",
-    "joi": "^17.13.3",    "multer": "^1.4.5-lts.1",    "mysql2": "^3.13.0",    "reflect-metadata": "^0.2.2",    "typeorm": "^0.3.21",    "winston": "^3.17.0"  },  "devDependencies": {    "@types/bcryptjs": "^2.4.6",    "@types/cors": "^2.8.17",    "@types/express": "^5.0.0",    "@types/joi": "^17.2.2",    "@types/node": "^22.13.10",    "ts-node": "^10.9.2"  }}
+}
