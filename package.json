@@ -2,9 +2,9 @@
   "name": "your-project",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "Midterm/users/user.controller.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node Midterm/users/user.controller.js"
   },
   "dependencies": {
     "express": "^4.17.2",
